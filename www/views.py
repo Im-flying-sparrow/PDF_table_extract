@@ -24,6 +24,8 @@ from utils.location import get_file_dim, get_regions, get_regions_img, bbox_to_a
 from utils.tasks import task_split
 from utils.cell_control import *
 
+from backup_system.backup import *
+
 from check_lattice.Lattice_2 import Lattice2
 from check_lattice.check_line_scale import GetLineScale
 
@@ -164,7 +166,6 @@ def autoExtract():
 
     file_names = request.form.getlist('file_names')
     
-
     # original pdf -> split 1, 2 .... n page pdf
     for file_name in file_names:
         split_progress[file_name] = 0
@@ -196,7 +197,7 @@ def autoExtract():
                 page_file = file_page_path + f"\\page-{page}.pdf"
                 image_file = file_page_path + f"\\page-{page}.png"
 
-                v['imageHeight'], v['imageWidth'], _ = cv2.cv2.imread(image_file).shape
+                v['imageHeight'], v['imageWidth'], _ = cv2.imread(image_file).shape
 
                 # for table in tables:
                     # bbox = table.bbox
@@ -237,11 +238,14 @@ def autoExtract():
             bboxs = 0
 
         detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = result
-
+    file_page_path += '\\'
+    converted_hash = file_hash(file_page_path, file_name)
+    temp_path = os.getcwd()+'\\'+'backup_system'+'\\'
+    create_task(temp_path, converted_hash)
     # resp = jsonify({'message' : 'Files successfully uploaded', 'detected_areas':detected_areas, 'split_progress':dict(split_progress)})
     resp = jsonify( json.dumps({'message' : 'Files successfully uploaded', 'detected_areas':detected_areas, 'split_progress':dict(split_progress)}, cls=NumpyEncoder) )
     resp.status_code = 201
-
+                                                                                                                                                                        
     is_working = False
     split_progress = {}
     return resp
@@ -339,7 +343,7 @@ def pre_extract():
             page_file = file_page_path + f"\\page-{page}.pdf"
             image_file = file_page_path + f"\\page-{page}.png"
 
-            v['imageHeight'], v['imageWidth'], _ = cv2.cv2.imread(image_file).shape
+            v['imageHeight'], v['imageWidth'], _ = cv2.imread(image_file).shape
 
             for table in tables:
                 bbox = table._bbox

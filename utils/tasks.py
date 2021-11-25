@@ -15,7 +15,7 @@ import cv2
 from camelot.parsers import Stream
 from check_lattice.Lattice_2 import Lattice2
 
-from camelot.ext.ghostscript import Ghostscript
+from ghostscript import Ghostscript
 
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from camelot.utils import get_page_layout, get_text_objects, get_rotation
