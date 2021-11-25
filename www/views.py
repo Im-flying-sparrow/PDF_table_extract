@@ -241,15 +241,25 @@ def autoExtract():
     file_page_path += '\\'
     converted_hash = file_hash(file_page_path, file_name)
     temp_path = os.getcwd()+'\\'+'backup_system'+'\\'
-    create_task(temp_path, converted_hash)
+    task_info = create_task(temp_path, converted_hash)
+
+    if task_info != -1:
+        pages = detected_areas.keys()
+        pages.sort()
+
+        # for page in pages:
+        #     task_info[page] = {
+
+        #     }
+
+
     # resp = jsonify({'message' : 'Files successfully uploaded', 'detected_areas':detected_areas, 'split_progress':dict(split_progress)})
     resp = jsonify( json.dumps({'message' : 'Files successfully uploaded', 'detected_areas':detected_areas, 'split_progress':dict(split_progress)}, cls=NumpyEncoder) )
     resp.status_code = 201
-                                                                                                                                                                        
+                                                                                                                                  
     is_working = False
     split_progress = {}
     return resp
-
 
 # progress 진행도를 반환하는 라우트
 @views.route('/getProgress', methods = ['POST'])

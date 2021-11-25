@@ -40,11 +40,13 @@ def create_task(path, file_hash):
 
     if os.path.isfile(f'{path+file_hash}.json'):
         print("작업 정보 파일이 존재합니다.")
-        read_task()
+        return -1
     else:
         print("작업 정보 파일을 생성합니다.")
         with open(f"{path+file_hash}.json", 'w') as f:
             json.dump(task_info, f)
+            return task_info
+
 
 def update_task(path, file_hash, table_index, bbox, line_scale, last_page=0, checked=[]):
     '''
