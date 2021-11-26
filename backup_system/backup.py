@@ -40,15 +40,15 @@ def create_task(path, file_hash):
 
     if os.path.isfile(f'{path+file_hash}.json'):
         print("작업 정보 파일이 존재합니다.")
-        return -1
+        return False
     else:
         print("작업 정보 파일을 생성합니다.")
         with open(f"{path+file_hash}.json", 'w') as f:
             json.dump(task_info, f)
-            return task_info
+            return True
 
 
-def update_task(path, file_hash, table_index, bbox, line_scale, last_page=0, checked=[]):
+def update_task(path, file_hash, backup_tasks, last_page=0, checked=[]):
     '''
     작업 정보 파일 갱신
     Update task information file
@@ -63,20 +63,22 @@ def update_task(path, file_hash, table_index, bbox, line_scale, last_page=0, che
     last_page <int> : The last page the user was working on
     checked <list> : Pages checked by the user
     '''
+
     if os.path.isfile(f'{path+file_hash}.json'):
         with open(f'{path+file_hash}.json', 'r') as f:
-            task_info = json.loads(f)
+            task_info = json.load(f)
     else:
         print("작업 저장 파일이 존재하지 않음")
-        return -1
 
     task_info['last_page'] = last_page
     task_info['checked'] = checked
-    task_info[table_index] = {
-        'bbox' : bbox,
-        'line_scale' : line_scale
-    }
-
+    for page in backup_tasks.keys():
+        task_info[page] = backup_tasks[page]
+    # task_info[table_index] = {
+    #     'bbox' : bbox,
+    #     'line_scale' : line_scale
+    # }
+    #print(f'여기다 여기 : {path+file_hash}')
     with open(f'{path+file_hash}.json', 'w') as f:
         json.dump(task_info, f, ensure_ascii=False)
 
