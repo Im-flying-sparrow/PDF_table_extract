@@ -173,9 +173,10 @@ def autoExtract():
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], file_name)
         file_page_path = os.path.splitext(filepath)[0]
         filepath = os.path.join(file_page_path, file_name)
-        #print(f'여기야 여기 여기 여기 여기 여기 여기\n{filepath}\n{file_name}')
+
         
         converted_hash = file_hash(file_page_path, file_name)
+        #here
 
         inputstream = open(filepath, "rb")
         infile = PdfFileReader(inputstream, strict=False)
