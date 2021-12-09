@@ -14,7 +14,7 @@ def file_hash(path, file_name):
     ===========================================
     return file_hash <string> : hash-converted pdf file
     '''
-    with open(path+file_name, 'rb') as f:
+    with open(path+'\\'+file_name, 'rb') as f:
         pdf_file = f.read()
 
     enc = hashlib.md5()
@@ -37,7 +37,7 @@ def create_task(path, file_hash):
         "last_page" : 0,
         "checked" : [],
     }
-
+    
     if os.path.isfile(f'{path+file_hash}.json'):
         print("작업 정보 파일이 존재합니다.")
         return False
@@ -80,7 +80,7 @@ def update_task(path, file_hash, backup_tasks, last_page=0, checked=[]):
     # }
     #print(f'여기다 여기 : {path+file_hash}')
     with open(f'{path+file_hash}.json', 'w') as f:
-        json.dump(task_info, f, ensure_ascii=False)
+        json.dump(task_info, f)
 
 def read_task(path, file_hash):
     '''

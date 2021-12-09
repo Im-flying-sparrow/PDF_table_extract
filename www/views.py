@@ -173,10 +173,18 @@ def autoExtract():
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], file_name)
         file_page_path = os.path.splitext(filepath)[0]
         filepath = os.path.join(file_page_path, file_name)
-
         
         converted_hash = file_hash(file_page_path, file_name)
+        temp_path = os.getcwd()+'\\'+'backup_system'+'\\'
+
+        print('================================================')
+        print(f'{temp_path+converted_hash}.json')
+        print('================================================')
+        if os.path.isfile(f'{temp_path+converted_hash}.json'):
+            print('이미 존재함')
+            continue
         #here
+        
 
         inputstream = open(filepath, "rb")
         infile = PdfFileReader(inputstream, strict=False)
@@ -244,7 +252,7 @@ def autoExtract():
         detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = result
     file_page_path += '\\'
     
-    temp_path = os.getcwd()+'\\'+'backup_system'+'\\'
+    
     task_info = create_task(temp_path, converted_hash)
 
     if task_info == True:
@@ -259,7 +267,7 @@ def autoExtract():
     # resp = jsonify({'message' : 'Files successfully uploaded', 'detected_areas':detected_areas, 'split_progress':dict(split_progress)})
     resp = jsonify( json.dumps({'message' : 'Files successfully uploaded', 'detected_areas':detected_areas, 'split_progress':dict(split_progress)}, cls=NumpyEncoder) )
     resp.status_code = 201
-                                                                                                                                  
+                                                                                                                                   
     is_working = False
     split_progress = {}
     return resp
