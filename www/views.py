@@ -168,23 +168,32 @@ def autoExtract():
     
     # original pdf -> split 1, 2 .... n page pdf
     for file_name in file_names:
-        split_progress[file_name] = 0
-
         filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], file_name)
         file_page_path = os.path.splitext(filepath)[0]
         filepath = os.path.join(file_page_path, file_name)
 
-        
+        file_page_path += '\\'
         converted_hash = file_hash(file_page_path, file_name)
-        #here
+        temp_path = os.getcwd()+'\\'+'backup_system'+'\\'
+        task_info = create_task(temp_path, converted_hash)
+        print(task_info)
+
+        if task_info == False:
+            print("이미 업로드한 파일")
+            # detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = result
+            detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = read_task(temp_path, converted_hash)
+            print(f'여기야 여기 : {detected_areas}')
+            continue
+        
+        split_progress[file_name] = 0        
+
+        result = task_split(file_name, filepath, file_page_path, split_progress, logger)        
 
         inputstream = open(filepath, "rb")
         infile = PdfFileReader(inputstream, strict=False)
         total_page = infile.getNumPages()
         inputstream.close()
         empty_pages = []
-
-        result = task_split(file_name, filepath, file_page_path, split_progress, logger)
 
         print("이거 끝")
 
@@ -242,14 +251,14 @@ def autoExtract():
             bboxs = 0
 
         detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = result
+        update_task(temp_path, converted_hash, detected_areas)
+
+        print(f'여기야 여기 : {detected_areas}')
     file_page_path += '\\'
+
+    # if task_info == True:
+    #     update_task(temp_path, converted_hash, detected_areas)        
     
-    temp_path = os.getcwd()+'\\'+'backup_system'+'\\'
-    task_info = create_task(temp_path, converted_hash)
-
-    if task_info == True:
-        update_task(temp_path, converted_hash, detected_areas)        
-
         # pages = detected_areas.keys()
         # pages.sort()
 
@@ -383,11 +392,6 @@ def pre_extract():
     resp = jsonify({'message' : 'success'})
     resp.status_code = 201
     return resp
-
-
-
-
-
 
 
 # 추출할 pdf파일이 정해졌을때 추출을 진행하는 라우트 (Get 요청으로 pdf파일 명시)

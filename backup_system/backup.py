@@ -34,8 +34,6 @@ def create_task(path, file_hash):
     file_hash <string> : pdf file hash value
     '''
     task_info = {
-        "last_page" : 0,
-        "checked" : [],
     }
 
     if os.path.isfile(f'{path+file_hash}.json'):
@@ -45,10 +43,9 @@ def create_task(path, file_hash):
         print("작업 정보 파일을 생성합니다.")
         with open(f"{path+file_hash}.json", 'w') as f:
             json.dump(task_info, f)
-            return True
+        return True
 
-
-def update_task(path, file_hash, backup_tasks, last_page=0, checked=[]):
+def update_task(path, file_hash, detected_areas ,last_page=0, checked=[]):
     '''
     작업 정보 파일 갱신
     Update task information file
@@ -63,24 +60,22 @@ def update_task(path, file_hash, backup_tasks, last_page=0, checked=[]):
     last_page <int> : The last page the user was working on
     checked <list> : Pages checked by the user
     '''
-
     if os.path.isfile(f'{path+file_hash}.json'):
         with open(f'{path+file_hash}.json', 'r') as f:
             task_info = json.load(f)
     else:
         print("작업 저장 파일이 존재하지 않음")
+        return -1
 
-    task_info['last_page'] = last_page
-    task_info['checked'] = checked
-    for page in backup_tasks.keys():
-        task_info[page] = backup_tasks[page]
+    # task_info['last_page'] = last_page
+    # task_info['checked'] = checked
     # task_info[table_index] = {
     #     'bbox' : bbox,
     #     'line_scale' : line_scale
     # }
-    #print(f'여기다 여기 : {path+file_hash}')
+
     with open(f'{path+file_hash}.json', 'w') as f:
-        json.dump(task_info, f, ensure_ascii=False)
+        json.dump(detected_areas, f)
 
 def read_task(path, file_hash):
     '''
@@ -105,7 +100,7 @@ def read_task(path, file_hash):
     }
     '''
     if os.path.isfile(f'{path+file_hash}.json'):
-        with open(path+file_hash, 'r') as f:
-            task_info = json.loads(f)
+        with open(f'{path+file_hash}.json', 'r') as f:
+            task_info = json.load(f)
 
     return task_info
