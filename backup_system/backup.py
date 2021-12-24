@@ -45,7 +45,17 @@ def create_task(path, file_hash):
             json.dump(task_info, f)
         return True
 
-def update_task(path, file_hash, detected_areas ,last_page=0, checked=[]):
+def backup_task(path, file_hash, info):
+    if os.path.isfile(f'{path+file_hash}_task.json'):
+        with open(f'{path+file_hash}_task.json', 'r') as f:
+            task_info = json.load(f)
+    task_info['checked'] = info['checked']
+    task_info['line_scale'] = info['line_scale']
+
+    with open(f'{path+file_hash}_task.json', 'r') as f:
+        json.dump(task_info, f)
+
+def update(path, file_hash, detected_areas):
     '''
     작업 정보 파일 갱신
     Update task information file
@@ -77,7 +87,7 @@ def update_task(path, file_hash, detected_areas ,last_page=0, checked=[]):
     with open(f'{path+file_hash}.json', 'w') as f:
         json.dump(detected_areas, f)
 
-def read_task(path, file_hash):
+def read(path, file_hash):
     '''
     저장된 작업정보 파일 읽기
     Read saved task information file

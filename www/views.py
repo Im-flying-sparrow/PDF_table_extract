@@ -176,14 +176,12 @@ def autoExtract():
         converted_hash = file_hash(file_page_path, file_name)
         temp_path = os.getcwd()+'\\'+'backup_system'+'\\'
         task_info = create_task(temp_path, converted_hash)
-        print(task_info)
 
         if task_info == False:
-            print("이미 업로드한 파일")
             # detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = result
-            detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = read_task(temp_path, converted_hash)
-            print(f'여기야 여기 : {detected_areas}')
+            detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = read(temp_path, converted_hash)
             continue
+            
         
         split_progress[file_name] = 0        
 
@@ -194,8 +192,6 @@ def autoExtract():
         total_page = infile.getNumPages()
         inputstream.close()
         empty_pages = []
-
-        print("이거 끝")
 
         if result is not None and len(result) > 0:
             # with open(f"table_data/{file_name}-table-data.pickle", "wb") as fw:
@@ -251,9 +247,8 @@ def autoExtract():
             bboxs = 0
 
         detected_areas[file_name.replace('.pdf', '').replace('.PDF', '')] = result
-        update_task(temp_path, converted_hash, detected_areas)
+        update(temp_path, converted_hash, detected_areas)
 
-        print(f'여기야 여기 : {detected_areas}')
     file_page_path += '\\'
 
     # if task_info == True:
